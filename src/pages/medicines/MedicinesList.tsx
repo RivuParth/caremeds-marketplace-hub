@@ -16,8 +16,8 @@ const MedicinesList = () => {
   const [filteredMedicines, setFilteredMedicines] = useState<Medicine[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStore, setSelectedStore] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStore, setSelectedStore] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   
   // Get unique store and category lists
   const stores = [...new Set(medicines.map(med => med.storeName))];
@@ -51,12 +51,12 @@ const MedicinesList = () => {
     }
     
     // Apply store filter
-    if (selectedStore) {
+    if (selectedStore !== "all") {
       result = result.filter(med => med.storeName === selectedStore);
     }
     
     // Apply category filter
-    if (selectedCategory) {
+    if (selectedCategory !== "all") {
       result = result.filter(med => med.category === selectedCategory);
     }
     
@@ -77,8 +77,8 @@ const MedicinesList = () => {
   
   const clearFilters = () => {
     setSearchTerm("");
-    setSelectedStore("");
-    setSelectedCategory("");
+    setSelectedStore("all");
+    setSelectedCategory("all");
   };
   
   return (
@@ -102,7 +102,7 @@ const MedicinesList = () => {
               <SelectValue placeholder="All Pharmacies" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Pharmacies</SelectItem>
+              <SelectItem value="all">All Pharmacies</SelectItem>
               {stores.map(store => (
                 <SelectItem key={store} value={store}>
                   {store}
@@ -118,7 +118,7 @@ const MedicinesList = () => {
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="all">All Categories</SelectItem>
               {categories.map(category => (
                 <SelectItem key={category} value={category}>
                   {category}
@@ -128,7 +128,7 @@ const MedicinesList = () => {
           </Select>
         </div>
         
-        {(searchTerm || selectedStore || selectedCategory) && (
+        {(searchTerm || selectedStore !== "all" || selectedCategory !== "all") && (
           <button
             onClick={clearFilters}
             className="text-sm text-caremeds-blue hover:underline"
