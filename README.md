@@ -1,73 +1,97 @@
-# Welcome to your Lovable project
 
-## Project info
+# CareMeds - Medicine Delivery App
 
-**URL**: https://lovable.dev/projects/cf6748bf-c14b-4bdf-a54c-1b1be50f231f
+CareMeds is a multi-vendor medicine delivery application with separate interfaces for customers, pharmacy sellers, and admins.
 
-## How can I edit this code?
+## Project Structure
 
-There are several ways of editing your application.
+This project consists of two main parts:
 
-**Use Lovable**
+1. **Server** - Node.js/Express backend with MongoDB
+2. **Mobile** - React Native with Expo
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/cf6748bf-c14b-4bdf-a54c-1b1be50f231f) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v14 or newer)
+- MongoDB (running locally or connection string to MongoDB Atlas)
+- Expo CLI (`npm install -g expo-cli`)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Setting Up the Backend Server
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Navigate to the server directory:
+```
+cd server
+```
 
-Follow these steps:
+2. Install dependencies:
+```
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Create a `.env` file in the server directory with these variables:
+```
+MONGODB_URI=mongodb://localhost:27017/caremeds
+JWT_SECRET=your_jwt_secret_key_here
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the server:
+```
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The server will be running on http://localhost:5000
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Setting Up the Mobile App
 
-**Use GitHub Codespaces**
+1. Navigate to the mobile directory:
+```
+cd mobile
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. Install dependencies:
+```
+npm install
+```
 
-## What technologies are used for this project?
+3. Start the Expo development server:
+```
+npm start
+```
 
-This project is built with:
+4. Use the Expo Go app on your phone to scan the QR code, or press 'a' to open in an Android emulator or 'i' to open in an iOS simulator.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## API Endpoints
 
-## How can I deploy this project?
+### Authentication
+- POST `/api/auth/login` - Login user/seller/admin
+- POST `/api/auth/register` - Register new user/seller
 
-Simply open [Lovable](https://lovable.dev/projects/cf6748bf-c14b-4bdf-a54c-1b1be50f231f) and click on Share -> Publish.
+### Products
+- GET `/api/product` - Get all products
+- POST `/api/product` - Create a new product (seller only)
+- GET `/api/product/:id` - Get product by ID
+- PUT `/api/product/:id` - Update a product (seller only)
+- DELETE `/api/product/:id` - Delete a product (seller only)
 
-## Can I connect a custom domain to my Lovable project?
+### Orders
+- POST `/api/order` - Create a new order
+- GET `/api/order/myorders` - Get logged in user orders
+- GET `/api/order/seller` - Get seller orders
+- PUT `/api/order/:id/status` - Update order status
+- GET `/api/order/:id` - Get order by ID
 
-Yes, you can!
+### Seller
+- GET `/api/seller/products` - Get seller products
+- GET `/api/seller/stats` - Get seller statistics
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Admin
+- GET `/api/admin/sellers` - Get all sellers
+- GET `/api/admin/stats` - Get admin statistics
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## Demo Accounts
+
+- User: user@example.com / password
+- Seller: seller@example.com / password
+- Admin: admin@example.com / admin
