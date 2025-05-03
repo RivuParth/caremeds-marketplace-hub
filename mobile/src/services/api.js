@@ -8,7 +8,29 @@ const api = axios.create({
   // Use your computer's IP for a real device: 'http://192.168.1.X:5000'
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  timeout: 10000 // Set timeout to 10 seconds
 });
+
+// Add request interceptor for authentication
+api.interceptors.request.use(
+  async (config) => {
+    try {
+      // Get the token from AsyncStorage
+      const token = await AsyncStorage.getItem('cloudkitchen_token');
+      
+      // If token exists, add it to the headers
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default api;

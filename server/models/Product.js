@@ -34,6 +34,22 @@ const productSchema = new mongoose.Schema({
   image: {
     type: String,
     default: 'placeholder.jpg'
+  },
+  preparationTime: {
+    type: Number,
+    default: 30 // default 30 minutes
+  },
+  ingredients: {
+    type: [String],
+    default: []
+  },
+  isVegetarian: {
+    type: Boolean,
+    default: false
+  },
+  isSpicy: {
+    type: Number, // 0-3 scale where 0 is not spicy, 3 is very spicy
+    default: 0
   }
 }, {
   timestamps: true

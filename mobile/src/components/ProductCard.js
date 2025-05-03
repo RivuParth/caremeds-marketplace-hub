@@ -15,6 +15,17 @@ const ProductCard = ({ product }) => {
     Alert.alert('Success', `${product.name} added to cart!`);
   };
   
+  // Helper function to render spice level
+  const renderSpiceLevel = (level) => {
+    const peppers = [];
+    for (let i = 0; i < level; i++) {
+      peppers.push(
+        <Ionicons key={i} name="flame" size={12} color="#FF5252" style={{marginRight: 2}} />
+      );
+    }
+    return peppers;
+  };
+
   return (
     <View style={styles.card}>
       <Image
@@ -27,6 +38,12 @@ const ProductCard = ({ product }) => {
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{product.category}</Text>
         </View>
+        
+        {product.isVegetarian && (
+          <View style={[styles.badge, styles.vegBadge]}>
+            <Text style={styles.badgeText}>Veg</Text>
+          </View>
+        )}
       </View>
       
       <View style={styles.contentContainer}>
@@ -34,8 +51,18 @@ const ProductCard = ({ product }) => {
         <Text style={styles.description} numberOfLines={2}>{product.description}</Text>
         
         <View style={styles.storeContainer}>
-          <Ionicons name="medkit-outline" size={14} color="#666" />
+          <Ionicons name="restaurant-outline" size={14} color="#666" />
           <Text style={styles.storeText} numberOfLines={1}>{product.storeName}</Text>
+        </View>
+        
+        <View style={styles.detailsRow}>
+          <View style={styles.spiceContainer}>
+            {product.isSpicy > 0 && renderSpiceLevel(product.isSpicy)}
+          </View>
+          <View style={styles.timeContainer}>
+            <Ionicons name="time-outline" size={12} color="#666" />
+            <Text style={styles.timeText}>{product.preparationTime} min</Text>
+          </View>
         </View>
         
         <View style={styles.footer}>
@@ -73,12 +100,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     left: 8,
+    flexDirection: 'row',
   },
   badge: {
     backgroundColor: 'rgba(59, 130, 246, 0.9)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    marginRight: 4,
+  },
+  vegBadge: {
+    backgroundColor: 'rgba(22, 163, 74, 0.9)',
   },
   badgeText: {
     color: 'white',
@@ -107,6 +139,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginLeft: 4,
+  },
+  detailsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  spiceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeText: {
+    fontSize: 10,
+    color: '#666',
+    marginLeft: 2,
   },
   footer: {
     flexDirection: 'row',

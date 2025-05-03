@@ -20,16 +20,17 @@ const orderSchema = new mongoose.Schema({
     },
     name: String,
     price: Number,
-    quantity: Number
+    quantity: Number,
+    specialInstructions: String
   }],
   status: {
     type: String,
-    enum: ['pending', 'accepted', 'out_for_delivery', 'delivered', 'cancelled'],
+    enum: ['pending', 'accepted', 'preparing', 'ready_for_pickup', 'out_for_delivery', 'delivered', 'cancelled'],
     default: 'pending'
   },
   paymentType: {
     type: String,
-    enum: ['cash', 'upi'],
+    enum: ['cash', 'upi', 'card'],
     default: 'cash'
   },
   totalAmount: {
@@ -39,6 +40,18 @@ const orderSchema = new mongoose.Schema({
   deliveryAddress: {
     type: String,
     required: true
+  },
+  deliveryFee: {
+    type: Number,
+    default: 40
+  },
+  deliveryType: {
+    type: String,
+    enum: ['delivery', 'pickup'],
+    default: 'delivery'
+  },
+  estimatedDeliveryTime: {
+    type: Date
   },
   commission: {
     type: Number,

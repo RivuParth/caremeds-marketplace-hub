@@ -1,8 +1,8 @@
 
 {
   "expo": {
-    "name": "CareMeds",
-    "slug": "caremeds-app",
+    "name": "CloudKitchen",
+    "slug": "cloud-kitchen-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
