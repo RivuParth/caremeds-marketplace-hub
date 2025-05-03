@@ -1,9 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import api from '../../services/api';
-import ProductCard from '../../components/ProductCard';
+import HomeHeader from '../../components/home/HomeHeader';
+import SearchBar from '../../components/home/SearchBar';
+import CategoryList from '../../components/home/CategoryList';
+import KitchenFilter from '../../components/home/KitchenFilter';
+import LoadingState from '../../components/home/LoadingState';
+import EmptyState from '../../components/home/EmptyState';
+import FoodGrid from '../../components/home/FoodGrid';
 
 const HomeScreen = () => {
   const [foods, setFoods] = useState([]);
@@ -89,114 +94,42 @@ const HomeScreen = () => {
     Alert.alert('Success', `${product.name} added to your cart!`);
   };
   
+  const showFiltersActive = () => {
+    return (
+      searchTerm || 
+      selectedKitchen !== 'all' || 
+      (selectedCategory !== 'all' && !featuredCategories.find(c => c.id === selectedCategory))
+    );
+  };
+  
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Hello, Foodie!</Text>
-          <Text style={styles.subtitle}>What would you like to eat today?</Text>
-        </View>
-        <TouchableOpacity style={styles.avatarContainer}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>JD</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search for food..."
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-        />
-      </View>
-      
-      {/* Category Selector */}
-      <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={featuredCategories}
-        keyExtractor={item => item.id}
-        style={styles.categoryList}
-        renderItem={({item}) => (
-          <TouchableOpacity 
-            style={[
-              styles.categoryItem, 
-              selectedCategory === item.id ? styles.selectedCategory : {}
-            ]}
-            onPress={() => handleCategoryPress(item.id)}
-          >
-            <Ionicons 
-              name={item.icon} 
-              size={20} 
-              color={selectedCategory === item.id ? "#fff" : "#9b87f5"} 
-            />
-            <Text 
-              style={[
-                styles.categoryText,
-                selectedCategory === item.id ? styles.selectedCategoryText : {}
-              ]}
-            >
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        )}
+      <HomeHeader />
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <CategoryList 
+        categories={featuredCategories} 
+        selectedCategory={selectedCategory} 
+        onCategoryPress={handleCategoryPress} 
       />
       
-      {/* Kitchen Filter */}
-      <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Kitchen:</Text>
-        <View style={styles.pickerContainer}>
-          <TouchableOpacity
-            style={styles.picker}
-            onPress={() => {
-              // Here you would open a modal or dropdown with all kitchens
-              // For simplicity, we'll just toggle between first kitchen and 'all'
-              setSelectedKitchen(prevKitchen => 
-                prevKitchen === 'all' && kitchens.length > 0 ? kitchens[0] : 'all'
-              );
-            }}
-          >
-            <Text numberOfLines={1} style={styles.pickerText}>
-              {selectedKitchen === 'all' ? 'All Kitchens' : selectedKitchen}
-            </Text>
-            <Ionicons name="chevron-down" size={16} color="#666" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <KitchenFilter 
+        selectedKitchen={selectedKitchen} 
+        kitchens={kitchens} 
+        onKitchenSelect={setSelectedKitchen} 
+      />
       
-      {(searchTerm || selectedKitchen !== 'all' || (selectedCategory !== 'all' && !featuredCategories.find(c => c.id === selectedCategory))) && (
+      {showFiltersActive() && (
         <TouchableOpacity style={styles.clearButton} onPress={clearFilters}>
           <Text style={styles.clearButtonText}>Clear Filters</Text>
         </TouchableOpacity>
       )}
       
       {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#9b87f5" />
-          <Text style={styles.loadingText}>Loading delicious food...</Text>
-        </View>
+        <LoadingState />
       ) : filteredFoods.length > 0 ? (
-        <FlatList
-          data={filteredFoods}
-          renderItem={({ item }) => <ProductCard product={item} onAddToCart={handleAddToCart} />}
-          keyExtractor={item => item._id}
-          numColumns={2}
-          contentContainerStyle={styles.foodsList}
-          columnWrapperStyle={styles.row}
-        />
+        <FoodGrid foods={filteredFoods} onAddToCart={handleAddToCart} />
       ) : (
-        <View style={styles.emptyContainer}>
-          <Ionicons name="restaurant-outline" size={50} color="#ccc" />
-          <Text style={styles.emptyText}>No food items found matching your criteria.</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={clearFilters}>
-            <Text style={styles.retryButtonText}>Clear filters and try again</Text>
-          </TouchableOpacity>
-        </View>
+        <EmptyState onRetry={clearFilters} />
       )}
     </View>
   );
@@ -208,108 +141,6 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f9f9f9',
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  greeting: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  avatarContainer: {
-    width: 40,
-    height: 40,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#9b87f5', // FoodMyWay primary color
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: 48,
-  },
-  categoryList: {
-    marginBottom: 16,
-  },
-  categoryItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedCategory: {
-    backgroundColor: '#9b87f5',
-    borderColor: '#9b87f5',
-  },
-  categoryText: {
-    marginLeft: 6,
-    fontSize: 14,
-    color: '#333',
-  },
-  selectedCategoryText: {
-    color: '#fff',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  filterLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginRight: 8,
-  },
-  pickerContainer: {
-    flex: 1,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    overflow: 'hidden',
-    backgroundColor: 'white',
-  },
-  picker: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 12,
-  },
-  pickerText: {
-    color: '#333',
-    flex: 1,
-  },
   clearButton: {
     alignSelf: 'flex-start',
     marginBottom: 16,
@@ -317,41 +148,6 @@ const styles = StyleSheet.create({
   clearButtonText: {
     color: '#9b87f5',
     fontSize: 14,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 16,
-    color: '#666',
-  },
-  foodsList: {
-    paddingBottom: 20,
-  },
-  row: {
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-  retryButton: {
-    padding: 12,
-  },
-  retryButtonText: {
-    color: '#9b87f5',
-    fontSize: 16,
   },
 });
 
