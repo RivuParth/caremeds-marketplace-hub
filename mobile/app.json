@@ -1,8 +1,8 @@
 
 {
   "expo": {
-    "name": "CloudKitchen",
-    "slug": "cloud-kitchen-app",
+    "name": "FoodMyWay",
+    "slug": "food-my-way-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

@@ -84,6 +84,11 @@ const HomeScreen = () => {
     setSelectedCategory(categoryId);
   };
   
+  const handleAddToCart = (product) => {
+    // In a complete app, this would add to cart in a cart context or state
+    Alert.alert('Success', `${product.name} added to your cart!`);
+  };
+  
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -128,7 +133,7 @@ const HomeScreen = () => {
             <Ionicons 
               name={item.icon} 
               size={20} 
-              color={selectedCategory === item.id ? "#fff" : "#3B82F6"} 
+              color={selectedCategory === item.id ? "#fff" : "#9b87f5"} 
             />
             <Text 
               style={[
@@ -172,13 +177,13 @@ const HomeScreen = () => {
       
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#3B82F6" />
+          <ActivityIndicator size="large" color="#9b87f5" />
           <Text style={styles.loadingText}>Loading delicious food...</Text>
         </View>
       ) : filteredFoods.length > 0 ? (
         <FlatList
           data={filteredFoods}
-          renderItem={({ item }) => <ProductCard product={item} />}
+          renderItem={({ item }) => <ProductCard product={item} onAddToCart={handleAddToCart} />}
           keyExtractor={item => item._id}
           numColumns={2}
           contentContainerStyle={styles.foodsList}
@@ -226,7 +231,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#9b87f5', // FoodMyWay primary color
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -266,8 +271,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   selectedCategory: {
-    backgroundColor: '#3B82F6',
-    borderColor: '#3B82F6',
+    backgroundColor: '#9b87f5',
+    borderColor: '#9b87f5',
   },
   categoryText: {
     marginLeft: 6,
@@ -310,7 +315,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   clearButtonText: {
-    color: '#3B82F6',
+    color: '#9b87f5',
     fontSize: 14,
   },
   loadingContainer: {
@@ -345,7 +350,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   retryButtonText: {
-    color: '#3B82F6',
+    color: '#9b87f5',
     fontSize: 16,
   },
 });

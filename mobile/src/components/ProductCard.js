@@ -5,14 +5,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onAddToCart }) => {
   const { user } = useAuth();
   const isCustomer = user && user.role === 'user';
   
   const handleAddToCart = () => {
-    // In a real app, you would add to cart logic here
-    // For now, just show an alert
-    Alert.alert('Success', `${product.name} added to cart!`);
+    if (onAddToCart) {
+      onAddToCart(product);
+    } else {
+      Alert.alert('Success', `${product.name} added to cart!`);
+    }
   };
   
   // Helper function to render spice level

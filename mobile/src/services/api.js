@@ -1,5 +1,6 @@
 
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Create an instance of axios
 const api = axios.create({
@@ -17,7 +18,7 @@ api.interceptors.request.use(
   async (config) => {
     try {
       // Get the token from AsyncStorage
-      const token = await AsyncStorage.getItem('cloudkitchen_token');
+      const token = await AsyncStorage.getItem('foodmyway_token');
       
       // If token exists, add it to the headers
       if (token) {
